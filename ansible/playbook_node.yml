@@ -1,0 +1,33 @@
+- hosts: all
+  become: yes
+  # user: vagrant
+  remote_user: vagrant
+
+  tasks:
+  - name: Atualiza Linux
+    apt:
+      upgrade: yes
+      update_cache: yes
+      cache_valid_time: 86400
+
+  - name: Instalar Microk8s
+    snap:
+      name: "microk8s"
+      channel: '1.21/stable'
+      classic: yes
+    become: yes  
+  
+  - name: Adicionar ao Grupo
+    ansible.builtin.user:
+      name: vagrant
+      group: microk8s
+
+  - name: Enable tools Microk8s\
+    ansible.builtin.shell: microk8s enable ha-cluster
+
+  - name: Resetar Microk8s\
+    ansible.builtin.shell: microk8s stop
+
+  - name: Resetar Microk8s\
+    ansible.builtin.shell: microk8s start
+
